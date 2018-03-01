@@ -1,0 +1,92 @@
+---
+title: "Regressions Models project course"
+author: "Camilo A. Aguilar"
+date: "Febrero de 2018"
+#output: html_document
+output: 
+      pdf_document:
+            toc: false
+            toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(kableExtra)
+library(dplyr)
+library(ggplot2)
+knitr::opts_chunk$set(echo = TRUE)
+data("mtcars")
+# http://www.rpubs.com/just4jcgeorge/239618
+```
+
+## Executive Summary
+
+En Motor Trend hemos identificado un problema para el cual presentamos una solución en este paper. Disponemos de un conjunto de datos con una colección de automóviles, estamos interesados en explorar la relación que existe entre algunas características disponibles en los datos y el rendimiento expresado en millas por galón (MPG) (nuestra variable resultado). En particular buscaremos acá resolver las siguientes preguntas:
+
+* Es una transmisión automática o manual mejor para MPG? 
+* Podremos cuantificar la diferencia de MPG entre transmisiones automáticas y manuales?
+
+## The data
+
+La base de datos con la cual trabajaremos fue extraída de nuestra revista *Motor Trend US*, la cual contiene información del consumo y otras caracteríticas de algunos automóviles fabricados entre 1973 y 1974. Las características medidas fueron las siguientes:
+
+* **mpg**: Miles/(US) gallon
+* **cyl**: Number of cylinders
+* **disp**: Displacement (cu.in.)
+* **hp**: Gross horsepower
+* **drat**: Rear axle ratio
+* **wt**: Weight (1000 lbs)
+* **qsec**: 1/4 mile time
+* **vs**: V/S
+* **am**: Transmission (0 = automatic, 1 = manual)
+* **gear**: Number of forward gears
+* **carb**: Number of carburetors
+
+La *Table 1* contiene una muestra de la información.
+
+```{r mtcars_sample, message=FALSE, warning=FALSE, echo=FALSE}
+kable(head(mtcars), caption="mtcars data base sample", format = "latex", booktabs = T) %>%
+kable_styling(latex_options = "striped")
+```
+
+## Exploratory data analysis
+
+```{r coercing, message=FALSE, warning=FALSE}
+mtcars$cyl <- as.factor(mtcars$cyl)
+mtcars$vs <- as.factor(mtcars$vs)
+mtcars$am <- as.factor(ifelse(mtcars$am==0, "automatic", "manual"))
+mtcars$gear <- as.factor(mtcars$gear)
+mtcars$carb <- as.factor(mtcars$carb)
+```
+
+Nuestro interés inicial es detectar alguna diferencia entre el rendimiento medido en *mpg* y el tipo de transmissión. La siguiente gráfica pareciera responder parcialmente nuestra pregunta, pues en ella se observa inmediatamente que el rendimiento medio para los automóviles con transmisión manual es mayor.
+
+```{r exp1, echo=FALSE, fig.height=2.2047, fig.width=3.307, message=FALSE, warning=FALSE, fig.align='center'}
+p10 <- ggplot(mtcars, aes(x = am, y = mpg)) +
+       geom_boxplot(fill = "deepskyblue3", colour = "black", alpha = 0.85) +
+       scale_y_continuous(name = "Mean Miles/(US) gallon") +
+       scale_x_discrete(name = "Transmission") +
+       ggtitle("Boxplot of mean mpg by Transmission type")
+p10
+```
+
+## Data analysis
+
+Nuestro deber ahora es asegurarnos que dicha diferencia en el rendimiento, causado por los diferentes tipos de transmisión es estadísticamente significativa. Para esto aplicamos a continuación un modelo de regresión lineal, que nos ayudará además a cuatificar la aparente diferencia.
+
+```{r mod1}
+mod1 <- lm(mpg ~., data=mtcars)
+summary(mod1)
+```
+
+
+
+
+
+
+
+
+
+
+
+
